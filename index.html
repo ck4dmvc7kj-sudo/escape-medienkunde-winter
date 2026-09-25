@@ -168,7 +168,7 @@ input.name{letter-spacing:0;text-transform:none;font-size:22px}
 const SALT = "eiskalt-";
 const LP_CODE = "9055";
 const DEFAULT_MINUTES = 35;
-const JOKERS = 3;
+const JOKERS = 2;
 
 function hash(s){
   let x = 0x811c9dc5;
@@ -220,17 +220,17 @@ const STAGES = [
         "Beim Print-Journalismus bleibt bis zum Redaktionsschluss mehr Zeit zum Prüfen und Gegenlesen.",
         "Online-Artikel enthalten häufiger Fehler, weil der Zeitdruck grösser ist.",
         "Wird ein Online-Artikel korrigiert, ist der Fehler aus der Welt.",
-        "Printartikel sind meistens kürzer und haben weniger Hintergrund als Online-Artikel.",
         "Bei werbefinanzierten Online-Portalen hängen die Einnahmen von den Klickzahlen ab.",
         "Online-Artikel sind immer schlechter als Printartikel.",
-        "Die Printausgabe erscheint meistens erst am Morgen nach dem Ereignis.",
         "Online-Portale übernehmen Agenturmeldungen seltener als Zeitungen, weil sie mehr Zeit haben."
       ],
-      answers:["251e363b"]
+      answers:["ee46fb1f"],
+      /* ab dem 2. Fehlversuch zeigt die App, wie viele Aussagen stimmen */
+      itemHashes:["b096c8b5","8df56602","d7864a1f","70f80418","09238f35","deaac25a","501342ff","e047bbe0"]
     }],
     hints:[
       "Denkt an den Zeitdruck: Wer kann sofort publizieren – und wer hat einen Redaktionsschluss am Abend? Und: Screenshots vergessen nichts.",
-      "5 Aussagen sind richtig, 5 falsch. Vorsicht bei Wörtern wie «immer»: Online ist nicht automatisch schlechter, es hat nur mehr Zeitdruck."
+      "4 Aussagen sind richtig, 4 falsch. Vorsicht bei Wörtern wie «immer»: Online ist nicht automatisch schlechter, es hat nur mehr Zeitdruck."
     ],
     merk:"Online ist schneller, Print hat mehr Zeit zum Prüfen. Der <b>Zeitdruck</b> ist ein Hauptgrund, warum Online-Artikel häufiger Fehler enthalten. Unser Vorteil: Wir haben bis 21:30 Uhr Zeit, die Blitz-Meldung zu prüfen!"
   },
@@ -338,9 +338,9 @@ const STAGES = [
 ];
 
 /* ---------- Zustand ---------- */
-const KEY = "eiskalt-erfunden-v2";
+const KEY = "eiskalt-erfunden-v3";
 const fresh = () => ({ phase:"start", group:"", stage:0, startedAt:0, finishedAt:0, minutes:DEFAULT_MINUTES,
-  jokersUsed:0, extraJokers:0, hintsShown:{}, answers:{}, wrong:0, skipped:[] });
+  jokersUsed:0, extraJokers:0, hintsShown:{}, answers:{}, wrong:0, fails:{}, skipped:[] });
 let S = fresh();
 function load(){ try{ const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); }catch(e){} }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
@@ -555,13 +555,21 @@ function check(){
   });
   const fb = $("#fb");
   if (res.every(r => r === "ok")){ solved(); return; }
-  if (res.some(r => r === "bad")) { S.wrong++; save(); }
+  if (res.some(r => r === "bad")) S.wrong++;
+  res.forEach((r, i) => { if (r === "bad"){ const k = partKey(i); S.fails[k] = (S.fails[k] || 0) + 1; } });
+  save();
   const msgs = res.map((r, i) => {
     const name = st.parts.length > 1 ? (st.parts[i].head || "").split("–")[0].trim() + ": " : "";
     if (r === "ok") return st.parts.length > 1 ? `<div class="feedback okp">✓ ${name}stimmt!</div>` : "";
     if (r === "empty") return `<div class="feedback err">${name}Noch nicht vollständig ausgefüllt.</div>`;
     if (r === "count") return `<div class="feedback err">${name}Wählt genau ${st.parts[i].count} Aussagen aus.</div>`;
     if (r === "near") return `<div class="feedback okp">${name}${st.parts[i].nearMiss[hash(valueOf(st.parts[i], partKey(i)))]}</div>`;
+    const p = st.parts[i], k = partKey(i);
+    if (p.itemHashes && S.fails[k] >= 2){
+      const v = S.answers[k];
+      const n = p.itemHashes.filter((h, j) => hash(j + ":" + p.letters[v[j]]) === h).length;
+      return `<div class="feedback err">✗ ${name}${n} von ${p.items.length} Aussagen stimmen. Welche noch nicht?</div>`;
+    }
     return `<div class="feedback err">✗ ${name}Das stimmt noch nicht. Prüft es nochmals!</div>`;
   });
   fb.innerHTML = msgs.join("");
