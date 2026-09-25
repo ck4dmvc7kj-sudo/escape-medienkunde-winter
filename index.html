@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Eiskalt erfunden</title>
+<style>
+:root{
+  --night:#0d1a2b; --night-2:#15263d; --ice:#8fd0ff; --ice-soft:#cfeaff;
+  --paper:#f8f5ee; --paper-2:#efe9dc; --ink:#1d2330; --ink-soft:#5a6272;
+  --red:#c8322b; --green:#1f8a55; --amber:#e5a31a; --line:#d9d1bf;
+  --radius:14px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{
+  background:radial-gradient(ellipse at top,#1d3556 0%,var(--night) 60%) fixed,var(--night);
+  color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.5;
+  -webkit-tap-highlight-color:transparent;overflow-x:hidden;
+}
+button{font:inherit;cursor:pointer}
+.snow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.snow i{position:absolute;top:-10px;color:#fff;opacity:.55;animation:fall linear infinite;font-style:normal}
+@keyframes fall{to{transform:translateY(110vh) translateX(30px)}}
+@media (prefers-reduced-motion:reduce){.snow{display:none}}
+
+/* Kopfleiste */
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;
+  padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));
+  background:rgba(9,18,31,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;
+  border-bottom:1px solid rgba(143,208,255,.2)}
+.bar .brand{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:.3px;white-space:nowrap}
+.bar .group{color:var(--ice-soft);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.bar .spacer{flex:1}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:22px;padding:4px 12px;border-radius:10px;
+  background:rgba(143,208,255,.12);border:1px solid rgba(143,208,255,.35);white-space:nowrap}
+.timer.warn{background:rgba(229,163,26,.2);border-color:var(--amber)}
+.timer.over{background:rgba(200,50,43,.3);border-color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.jokers{display:flex;gap:4px;font-size:20px;white-space:nowrap}
+.jokers span.used{opacity:.2;filter:grayscale(1)}
+
+.progress{display:flex;gap:6px;padding:12px 16px 0;max-width:900px;margin:0 auto;position:relative;z-index:1}
+.progress div{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.15)}
+.progress div.done{background:var(--ice)}
+.progress div.now{background:var(--amber)}
+
+main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:16px 16px 60px}
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.35);padding:24px;margin-bottom:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red)}
+h1,h2{font-family:var(--serif);line-height:1.15;margin:.2em 0 .4em}
+h1{font-size:44px}
+h2{font-size:30px}
+.lead{font-size:20px;color:var(--ink-soft)}
+.story{font-family:var(--serif);font-size:19px;border-left:4px solid var(--ice);padding:4px 0 4px 16px;margin:12px 0 18px;color:#2c3444}
+.headline-fake{font-family:var(--serif);font-weight:700;background:#fff3f2;border:2px dashed var(--red);color:var(--red);
+  padding:10px 14px;border-radius:10px;margin:10px 0;font-size:20px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
+.rules div{background:var(--paper-2);border-radius:10px;padding:12px;font-size:16px}
+.rules b{display:block;font-size:22px}
+.task{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+.task p{margin:.3em 0 .6em}
+.envelope{display:flex;align-items:center;gap:12px;background:#fff8e6;border:2px solid var(--amber);border-radius:12px;padding:12px 16px;margin:12px 0;font-weight:600}
+.envelope .ico{font-size:30px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.pill{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-soft)}
+
+label.lbl{display:block;font-weight:700;margin:8px 0 6px}
+input.text{width:100%;font-size:26px;padding:14px 16px;border-radius:12px;border:2px solid var(--line);
+  font-family:var(--sans);letter-spacing:3px;text-transform:uppercase;background:#fff;color:var(--ink)}
+input.text:focus{outline:none;border-color:var(--ice);box-shadow:0 0 0 4px rgba(143,208,255,.35)}
+input.name{letter-spacing:0;text-transform:none;font-size:22px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:12px 24px;border-radius:12px;border:0;
+  background:var(--night);color:#fff;font-weight:700;font-size:19px}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--red)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn[disabled]{opacity:.45}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* Umschalter */
+.toggles{display:grid;gap:10px}
+.tg{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;width:100%;color:var(--ink)}
+.tg .txt{flex:1;font-size:17px}
+.tg .txt small{display:block;color:var(--ink-soft);font-size:14px}
+.tg .val{min-width:150px;text-align:center;padding:8px 10px;border-radius:9px;background:var(--paper-2);color:var(--ink-soft);font-weight:700;font-size:16px}
+.tg .val.v0{background:#dff0ff;color:#15507a}
+.tg .val.v1{background:#fde7d5;color:#8a3d0a}
+.tg .val.v2{background:#e3f4e8;color:#1b6b42}
+.tg .val.ok{background:#e3f4e8;color:#1b6b42}
+.tg .val.bad{background:#fde3e1;color:#9b231d}
+
+/* Auswahl */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-size:18px;color:var(--ink)}
+.chip.on{background:var(--night);color:#fff;border-color:var(--night)}
+.list{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;font-size:17px;color:var(--ink);width:100%}
+.opt .box{flex:none;width:26px;height:26px;border-radius:7px;border:2px solid var(--ink-soft);display:grid;place-items:center;font-weight:900;margin-top:1px}
+.opt.round .box{border-radius:50%}
+.opt.on{border-color:var(--night);background:#eef4fb}
+.opt.on .box{background:var(--night);border-color:var(--night);color:#fff}
+
+.part{margin:18px 0}
+.part h3{font-size:18px;margin:0 0 8px}
+.feedback{margin-top:12px;padding:12px 14px;border-radius:10px;font-weight:600}
+.feedback.err{background:#fde3e1;color:#8f1f1a}
+.feedback.okp{background:#e3f4e8;color:#1b6b42}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.hintbox{background:#eef6ff;border:1px solid #bcdcf7;border-radius:12px;padding:12px 16px;margin-top:12px}
+.hintbox p{margin:.2em 0}
+
+/* Overlay */
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(5,10,18,.75);display:flex;align-items:center;justify-content:center;padding:16px}
+.overlay .card{max-width:640px;width:100%;max-height:90vh;overflow:auto}
+.stamp{display:inline-block;border:4px solid var(--green);color:var(--green);font-weight:900;letter-spacing:2px;padding:6px 14px;border-radius:8px;transform:rotate(-4deg);font-size:22px;margin-bottom:10px}
+.merk{background:var(--paper-2);border-radius:12px;padding:14px 16px;font-size:18px}
+.merk b{display:block;margin-bottom:4px;color:var(--red);font-size:14px;letter-spacing:1px;text-transform:uppercase}
+
+.win h1{font-size:52px;color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+.stats div{background:var(--paper-2);border-radius:12px;padding:14px;text-align:center}
+.stats b{display:block;font-size:30px;font-family:var(--serif)}
+.frontpage{border:2px solid var(--ink);padding:14px;border-radius:6px;background:#fff;font-family:var(--serif)}
+.frontpage .mast{text-align:center;font-weight:900;font-size:28px;border-bottom:3px double var(--ink);padding-bottom:6px;margin-bottom:10px}
+.frontpage .hl{font-size:30px;font-weight:700;line-height:1.1}
+
+.lp{position:fixed;right:10px;bottom:10px;z-index:6;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);
+  border-radius:10px;padding:6px 10px;font-size:13px}
+.lpmenu .btn{width:100%;margin-bottom:8px}
+@media (max-width:600px){
+  h1{font-size:34px} h2{font-size:25px} .card{padding:18px}
+  .bar .brand{display:none}
+  .tg{flex-wrap:wrap} .tg .val{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<header class="bar" id="bar" hidden>
+  <span class="brand">❄ Säntisblick</span>
+  <span class="group" id="barGroup"></span>
+  <span class="spacer"></span>
+  <span class="jokers" id="barJokers" aria-label="Joker"></span>
+  <span class="timer" id="barTimer">35:00</span>
+</header>
+<div class="progress" id="progress" hidden></div>
+
+<main id="app"></main>
+
+<button class="lp" id="lpBtn" type="button">LP</button>
+<div class="overlay" id="overlay" hidden><div class="card" id="overlayCard"></div></div>
+
+<script>
+/* ============================================================
+   Eiskalt erfunden – Escape-Spiel Medienkunde (Lektion 6)
+   Lösungen sind nur als Prüfsummen gespeichert.
+   Lehrpersonen-Code und Lösungen: siehe spielleitung.html
+   ============================================================ */
+const SALT = "eiskalt-";
+const LP_CODE = "9055";
+const DEFAULT_MINUTES = 35;
+const JOKERS = 3;
+
+function hash(s){
+  let x = 0x811c9dc5;
+  const t = SALT + s;
+  for (let i = 0; i < t.length; i++){ x ^= t.charCodeAt(i); x = Math.imul(x, 0x01000193) >>> 0; }
+  return x.toString(16).padStart(8, "0");
+}
+const norm = s => s.toUpperCase().replace(/[^A-Z0-9ÄÖÜ]/g, "");
+
+const STAGES = [
+  {
+    icon:"📰", title:"Zwei Artikel, ein Text", lz:"LZ 1–2", envelope:1,
+    story:"Zuerst will der Chefredaktor sehen, ob ihr euer Handwerk versteht. Heute Morgen sind auf zwei Portalen Artikel über das Schneechaos erschienen. Sie sehen fast gleich aus – aber eben nur fast.",
+    parts:[{
+      type:"code", label:"Codewort",
+      task:"<p>Öffnet <b>Umschlag 1</b> und vergleicht den Fliesstext der beiden Artikel (Titel und Kopfzeile zählen nicht).</p><p>In <b>Artikel B</b> sind <b>7 Wörter</b> anders als in Artikel A. Die Anfangsbuchstaben dieser 7 Wörter ergeben – der Reihe nach – die Antwort auf die Frage: <b>Wer hat diese Texte wirklich geschrieben?</b></p>",
+      answers:["b8bf6643","71d71fa8"]
+    }],
+    hints:[
+      "Legt die beiden Artikel nebeneinander und lest Satz für Satz parallel. Sie sind genau gleich aufgebaut.",
+      "Die ersten zwei abweichenden Wörter in Artikel B sind «Anhaltender» (statt «Starker») und «gesamthaft» (statt «insgesamt»). Das Wort beginnt also mit A-G-…"
+    ],
+    merk:"Nachrichtenagenturen wie <b>Keystone-SDA</b> schreiben Meldungen und verkaufen sie an viele Redaktionen. Deshalb sehen viele Online-Artikel fast gleich aus. Erkennungszeichen: das Kürzel «(sda)» oder «Keystone-SDA»."
+  },
+  {
+    icon:"🧭", title:"Der Weg der Nachricht", lz:"LZ 3", envelope:2,
+    story:"Gut gemacht! Jetzt wollen wir sehen, wie eine seriöse Nachricht entsteht – damit ihr später erkennt, was bei der Blitz-Meldung alles fehlt.",
+    parts:[{
+      type:"code", label:"5-stelliger Code", numeric:true,
+      task:"<p>Öffnet <b>Umschlag 2</b>. Die Karten zeigen, wie der Artikel über den Lastwagen am Stoss entstanden ist.</p><p>Legt sie in die richtige Reihenfolge – <b>vom Ereignis bis auf den Bildschirm</b>. Achtung: <b>Eine Karte gehört nicht</b> zum Weg der Nachricht!</p><p>Die Zahlen auf den Karten ergeben in der richtigen Reihenfolge einen 5-stelligen Code.</p>",
+      answers:["8dbe8689"]
+    }],
+    hints:[
+      "Der Weg hat 5 Stationen: Ereignis → Journalist/in vor Ort → Nachrichtenagentur → Redaktion → Publikation.",
+      "Die Karte mit der Werbe-Versteigerung (Real-Time-Bidding) gehört nicht dazu. Der Code beginnt mit 4."
+    ],
+    merk:"<b>Ereignis → Journalist/in vor Ort → Nachrichtenagentur → Redaktion → Publikation.</b> An jeder Station wird entschieden, was berichtet wird und was nicht (Gatekeeping)."
+  },
+  {
+    icon:"⏱️", title:"Online gegen Print", lz:"LZ 4", envelope:null,
+    story:"Die Blitz-Meldung war um 14:07 Uhr online – unsere Zeitung erscheint erst morgen früh. Der Chefredaktor ist nervös: «Die anderen sind viel schneller als wir!» Aber ist Tempo nur ein Vorteil?",
+    parts:[{
+      type:"toggle", options:["Online","Print"], letters:["O","P"],
+      task:"<p>Tippt jede Aussage an, bis es stimmt: Passt sie zu <b>Online</b>- oder zu <b>Print</b>-Journalismus?</p>",
+      items:[
+        "Erscheint wenige Minuten nach dem Ereignis.",
+        "Ein Fehler steht fest – korrigiert wird erst in der nächsten Ausgabe.",
+        "Klickzahlen bestimmen die Werbeeinnahmen – das verlockt zu reisserischen Titeln.",
+        "Ein Fehler lässt sich sofort korrigieren – aber Screenshots verbreiten ihn weiter.",
+        "Bis zum Redaktionsschluss bleibt Zeit zum Prüfen und Gegenlesen.",
+        "Längere Texte mit mehr Hintergrund und Einordnung."
+      ],
+      answers:["9f950466"]
+    }],
+    hints:[
+      "Denkt an den Zeitdruck: Wer kann sofort publizieren – und wer hat einen Redaktionsschluss am Abend?",
+      "Drei Aussagen gehören zu Online, drei zu Print. Klickzahlen und Screenshots gehören zu Online."
+    ],
+    merk:"Online ist schneller, Print hat mehr Zeit zum Prüfen. Der <b>Zeitdruck</b> ist ein Hauptgrund, warum Online-Artikel häufiger Fehler enthalten. Unser Vorteil: Wir haben bis 21:30 Uhr Zeit, die Blitz-Meldung zu prüfen!"
+  },
+  {
+    icon:"💰", title:"Wer bezahlt?", lz:"LZ 5–6", envelope:null,
+    story:"Wer steckt eigentlich hinter BlitzNews24? Das Portal ist gratis – aber irgendjemand bezahlt die Server, die Büros und die Leute, die dort arbeiten.",
+    parts:[
+      {
+        type:"toggle", options:["Werbung","Abo / Paywall","Gebühren"], letters:["W","A","G"],
+        head:"Teil A – Finanzierung",
+        task:"<p>Wie finanzieren sich diese Medien hauptsächlich? Tippt so lange, bis das richtige Modell steht.</p>",
+        items:["20 Minuten","SRF","NZZ","BlitzNews24 <small>gratis, voller Werbung</small>","watson.ch","Tages-Anzeiger","nau.ch"],
+        answers:["dfd722c2"]
+      },
+      {
+        type:"choice", head:"Teil B – Die Klicklogik",
+        task:"<p>Warum lohnt sich eine Schock-Meldung für BlitzNews24?</p>",
+        items:[
+          "Weil dann die Serafe-Gebühren steigen.",
+          "Weil mehr Klicks mehr verkaufte Werbeplätze und damit mehr Geld bedeuten.",
+          "Weil dann mehr Leute ein Abo abschliessen."
+        ],
+        letters:["a","b","c"], answers:["811ee947"]
+      }
+    ],
+    hints:[
+      "Drei Modelle: Werbung (gratis für die Leserschaft), Abo/Paywall (die Leserschaft bezahlt), Gebühren (alle Haushalte zahlen die Serafe-Abgabe).",
+      "Nur ein Medium ist gebührenfinanziert: SRF. Zwei haben eine Paywall: NZZ und Tages-Anzeiger. Alle anderen leben von Werbung."
+    ],
+    merk:"<b>Werbefinanziert:</b> 20 Minuten, watson, nau.ch · <b>Abo/Paywall:</b> NZZ, Tages-Anzeiger · <b>Gebühren:</b> SRF. Gratis ist nie gratis: Werbefinanzierte Portale leben von Klicks – das verlockt zu Clickbait statt Qualität."
+  },
+  {
+    icon:"🔍", title:"Das Bewertungsraster", lz:"LZ 7–8", envelope:3,
+    story:"Jetzt nehmt ihr die Blitz-Meldung selbst unter die Lupe. Der Chefredaktor will eine klare Einschätzung: Können wir das drucken?",
+    parts:[
+      {
+        type:"toggle", options:["✓ erfüllt","✗ Problem"], letters:["O","X"], cls:["ok","bad"],
+        head:"Teil A – Das 5-Punkte-Raster",
+        task:"<p>Öffnet <b>Umschlag 3</b> und prüft die Blitz-Meldung mit dem Raster. Ist das Kriterium erfüllt oder gibt es ein Problem?</p>",
+        items:[
+          "1 Autorenschaft <small>Wer hat den Artikel geschrieben?</small>",
+          "2 Datum & Aktualität <small>Ist die Meldung aktuell?</small>",
+          "3 Quellen & Belege <small>Werden überprüfbare Quellen genannt?</small>",
+          "4 Sprache & Ton <small>Sachlich oder reisserisch?</small>",
+          "5 Mediumstyp <small>Wie finanziert sich das Portal, welche Interessen hat es?</small>"
+        ],
+        answers:["e1c48ad2"]
+      },
+      {
+        type:"pick", style:"chips", head:"Teil B – Nachricht oder Meinung?",
+        task:"<p>Eine sachliche Nachricht wertet nicht. Tippt alle Wörter aus der Blitz-Meldung an, die <b>werten</b>.</p>",
+        items:["Winterferien","SKANDAL","Februar","unfassbar","Schulen","Chaos-Behörde","Regierungsrat","endlich","Studie","schockierend","Appenzellerland"],
+        answers:["aaf89b6a"]
+      }
+    ],
+    hints:[
+      "Nur ein einziges Kriterium ist erfüllt. Aber Achtung: aktuell heisst noch lange nicht wahr!",
+      "Wertende Wörter drücken ein Gefühl oder eine Meinung aus. Es sind genau 5 – eines davon ist «unfassbar»."
+    ],
+    merk:"Nur das Datum stimmt. Der Autor fehlt, die Quellen sind vage («Insider», «Experten»), die Sprache ist reisserisch und das Portal lebt von Klicks. <b>Eine Nachricht ist sachlich</b> – wertende Wörter gehören in einen klar gekennzeichneten Kommentar."
+  },
+  {
+    icon:"🤖", title:"Mensch oder Maschine?", lz:"LZ 9–10", envelope:4, final:true,
+    story:"Letzte Spur! Eine Quelle hat euch einen Chat-Verlauf aus der Redaktion von BlitzNews24 zugespielt. Jetzt habt ihr den Beweis in der Hand – wenn ihr ihn richtig lest.",
+    parts:[
+      {
+        type:"pick", style:"list", count:3, head:"Teil A – Erfundene Fakten",
+        task:"<p>Öffnet <b>Umschlag 4</b>. Die Blitz-Meldung wurde von einer KI geschrieben – und die KI hat Fakten erfunden (<b>Halluzination</b>).</p><p>Welche <b>3 Aussagen</b> aus der Blitz-Meldung sind erfunden oder falsch? Tipp: Die Artikel aus Umschlag 1 helfen euch.</p>",
+        items:[
+          "Im Appenzellerland schneit es seit Dienstagmorgen.",
+          "Eine Studie der Universität Teufen zeigt, dass Kinder in Schneewintern weniger lernen.",
+          "Auf der Strasse zwischen Teufen und Gais gab es Unfälle.",
+          "Teufen liegt im Kanton Appenzell Innerrhoden.",
+          "Der Säntis ist der höchste Berg im Alpstein.",
+          "Regierungsrat Dr. Kurt Flockenhuber hat den Entscheid bestätigt."
+        ],
+        answers:["cc168ac8"]
+      },
+      {
+        type:"toggle", options:["kann KI gut","kann KI nicht"], letters:["K","N"], cls:["ok","bad"],
+        head:"Teil B – Was kann KI im Journalismus?",
+        task:"<p>Tippt jede Tätigkeit an: Kann KI das heute gut – oder braucht es dafür einen Menschen?</p>",
+        items:[
+          "Aus Resultat-Daten automatisch kurze Sportberichte schreiben",
+          "Prüfen, ob eine Information wirklich wahr ist",
+          "Artikel blitzschnell auf Französisch und Italienisch übersetzen",
+          "Aufgenommene Interviews in Text umwandeln (transkribieren)",
+          "Vor Ort mit Augenzeugen sprechen",
+          "Entscheiden, ob der Name einer betroffenen Person veröffentlicht werden darf"
+        ],
+        answers:["331514b0"]
+      }
+    ],
+    hints:[
+      "Vergleicht mit den sda-Artikeln aus Umschlag 1: Was dort steht, stimmt. Und: Teufen liegt in Appenzell Ausserrhoden.",
+      "Erfunden sind die Universität Teufen, der falsche Kanton – und ein Regierungsrat mit einem sehr winterlichen Namen. Teil B: KI kann nicht vor Ort sein und nicht selbst prüfen, ob etwas wahr ist."
+    ],
+    merk:"Eine KI berechnet, welche Wörter wahrscheinlich folgen – sie <b>weiss nicht, ob etwas wahr ist</b>. Darum kann sie Fakten erfinden (Halluzination). Hilfreich ist KI bei Routinearbeit wie Sportresultaten, Übersetzungen oder Transkriptionen. Prüfen und entscheiden muss ein Mensch."
+  }
+];
+
+/* ---------- Zustand ---------- */
+const KEY = "eiskalt-erfunden-v1";
+const fresh = () => ({ phase:"start", group:"", stage:0, startedAt:0, finishedAt:0, minutes:DEFAULT_MINUTES,
+  jokersUsed:0, extraJokers:0, hintsShown:{}, answers:{}, wrong:0, skipped:[] });
+let S = fresh();
+function load(){ try{ const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- Hilfen ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function fmt(sec){ const neg = sec < 0; sec = Math.abs(Math.round(sec)); return (neg ? "+" : "") + Math.floor(sec/60) + ":" + String(sec%60).padStart(2,"0"); }
+const jokersLeft = () => JOKERS + S.extraJokers - S.jokersUsed;
+
+function snow(){
+  const box = $("#snow"); const flakes = ["❄","❅","❆","•"];
+  for (let i = 0; i < 28; i++){
+    const f = document.createElement("i");
+    f.textContent = flakes[i % 4];
+    f.style.left = Math.random()*100 + "vw";
+    f.style.fontSize = (8 + Math.random()*16) + "px";
+    f.style.animationDuration = (9 + Math.random()*14) + "s";
+    f.style.animationDelay = (-Math.random()*20) + "s";
+    box.appendChild(f);
+  }
+}
+
+/* ---------- Kopfleiste ---------- */
+function renderBar(){
+  const on = S.phase !== "start";
+  $("#bar").hidden = !on; $("#progress").hidden = !on;
+  if (!on) return;
+  $("#barGroup").textContent = S.group;
+  $("#barJokers").innerHTML = Array.from({length:JOKERS + S.extraJokers}, (_, i) =>
+    `<span class="${i < S.jokersUsed ? "used" : ""}" title="Joker">🃏</span>`).join("");
+  $("#progress").innerHTML = STAGES.map((_, i) =>
+    `<div class="${S.phase === "won" || i < S.stage ? "done" : i === S.stage ? "now" : ""}"></div>`).join("");
+  tick();
+}
+function tick(){
+  if (S.phase === "start") return;
+  const end = S.phase === "won" ? S.finishedAt : Date.now();
+  const left = S.minutes*60 - (end - S.startedAt)/1000;
+  const t = $("#barTimer");
+  t.textContent = left >= 0 ? fmt(left) : "Druck läuft! " + fmt(left);
+  t.className = "timer" + (left < 0 ? " over" : left < 300 ? " warn" : "");
+}
+setInterval(tick, 1000);
+
+/* ---------- Bildschirme ---------- */
+function render(){
+  renderBar();
+  const app = $("#app");
+  if (S.phase === "start") app.innerHTML = startView();
+  else if (S.phase === "won") app.innerHTML = winView();
+  else app.innerHTML = stageView();
+  bind();
+  window.scrollTo(0, 0);
+}
+
+function startView(){
+  return `<div class="card">
+    <div class="kicker">Escape-Spiel · Medienkunde</div>
+    <h1>Eiskalt erfunden</h1>
+    <p class="lead">Stoppt die Falschmeldung, bevor sie gedruckt wird.</p>
+    <div class="story">
+      <p>Dienstag, 16:30 Uhr, Redaktion der Zeitung <b>«Säntisblick»</b>. Draussen schneit es seit dem frühen Morgen.</p>
+      <p>Seit 14:07 Uhr verbreitet sich auf dem Gratis-Portal <b>BlitzNews24</b> eine Meldung wie ein Lauffeuer:</p>
+    </div>
+    <div class="headline-fake">«SCHNEE-SKANDAL: Winterferien im Appenzellerland GESTRICHEN!»</div>
+    <div class="story">
+      <p>Der Chefredaktor will die Geschichte morgen auf die Titelseite bringen. <b>Redaktionsschluss ist um 21:30 Uhr.</b></p>
+      <p>Ihr seid das Recherche-Team. Prüft die Meldung Schritt für Schritt – mit allem, was ihr in der Medienkunde gelernt habt.</p>
+    </div>
+    <div class="rules">
+      <div><b>6 Rätsel</b>Eines pro Lektion der Reihe</div>
+      <div><b>1 Terminal</b>Nur auf diesem iPad gebt ihr Lösungen ein</div>
+      <div><b>✉️ Umschläge</b>Erst öffnen, wenn die App es sagt</div>
+      <div><b>🃏 ×${JOKERS}</b>Joker für Hinweise</div>
+      <div><b>${S.minutes} Min.</b>bis zum Redaktionsschluss</div>
+    </div>
+    <label class="lbl" for="groupName">Name eures Recherche-Teams</label>
+    <input class="text name" id="groupName" maxlength="30" placeholder="z.B. Team Schneeflocke" autocomplete="off" value="${esc(S.group)}">
+    <div class="actions"><button class="btn primary" id="startBtn" type="button">Recherche starten ❄</button></div>
+  </div>`;
+}
+
+function stageView(){
+  const st = STAGES[S.stage];
+  const shown = S.hintsShown[S.stage] || 0;
+  return `<div class="card" id="stageCard">
+    <div class="meta"><span class="pill">Rätsel ${S.stage + 1} von ${STAGES.length}</span><span class="pill">${st.lz}</span>${st.final ? '<span class="pill" style="color:var(--red)">Finale</span>' : ""}</div>
+    <h2>${st.icon} ${st.title}</h2>
+    <div class="story">${st.story}</div>
+    ${st.envelope ? `<div class="envelope"><span class="ico">✉️</span><span>Ihr dürft jetzt <b>Umschlag ${st.envelope}</b> öffnen.</span></div>` : ""}
+    ${st.parts.map((p, i) => partView(p, i)).join("")}
+    <div id="fb"></div>
+    <div class="actions">
+      <button class="btn primary" id="checkBtn" type="button">Lösung prüfen</button>
+      <button class="btn ghost" id="hintBtn" type="button" ${shown >= st.hints.length || jokersLeft() <= 0 ? "disabled" : ""}>
+        🃏 Joker einsetzen (${jokersLeft()} übrig)</button>
+    </div>
+    ${shown ? `<div class="hintbox">${st.hints.slice(0, shown).map((h, i) => `<p><b>Hinweis ${i + 1}:</b> ${h}</p>`).join("")}</div>` : ""}
+    ${jokersLeft() <= 0 && shown < st.hints.length ? `<p style="color:var(--ink-soft);font-size:15px;margin-top:10px">Keine Joker mehr – wenn ihr feststeckt, fragt die Lehrperson.</p>` : ""}
+  </div>`;
+}
+
+function partKey(i){ return S.stage + "-" + i; }
+function partView(p, i){
+  const k = partKey(i);
+  const val = S.answers[k];
+  let body = "";
+  if (p.type === "code"){
+    body = `<label class="lbl" for="in-${i}">${p.label}</label>
+      <input class="text" id="in-${i}" data-part="${i}" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+        ${p.numeric ? 'inputmode="numeric"' : ""} value="${esc(val || "")}">`;
+  } else if (p.type === "toggle"){
+    const v = val || [];
+    body = `<div class="toggles">${p.items.map((it, j) => {
+      const s = v[j];
+      const cls = s == null ? "" : (p.cls ? p.cls[s] : "v" + s);
+      return `<button type="button" class="tg" data-part="${i}" data-item="${j}"><span class="txt">${it}</span>
+        <span class="val ${cls}">${s == null ? "antippen" : p.options[s]}</span></button>`;
+    }).join("")}</div>`;
+  } else if (p.type === "pick"){
+    const v = val || [];
+    if (p.style === "chips"){
+      body = `<div class="chips">${p.items.map((it, j) =>
+        `<button type="button" class="chip ${v.includes(j) ? "on" : ""}" data-part="${i}" data-item="${j}">${it}</button>`).join("")}</div>`;
+    } else {
+      body = `<div class="list">${p.items.map((it, j) =>
+        `<button type="button" class="opt ${v.includes(j) ? "on" : ""}" data-part="${i}" data-item="${j}"><span class="box">${v.includes(j) ? "✓" : ""}</span><span>${it}</span></button>`).join("")}</div>
+        ${p.count ? `<p style="font-size:15px;color:var(--ink-soft)">Ausgewählt: ${v.length} von ${p.count}</p>` : ""}`;
+    }
+  } else if (p.type === "choice"){
+    body = `<div class="list">${p.items.map((it, j) =>
+      `<button type="button" class="opt round ${val === j ? "on" : ""}" data-part="${i}" data-item="${j}"><span class="box">${val === j ? "●" : ""}</span><span>${it}</span></button>`).join("")}</div>`;
+  }
+  return `<div class="part">${p.head ? `<h3>${p.head}</h3>` : ""}<div class="task">${p.task}${body}</div></div>`;
+}
+
+function winView(){
+  const used = Math.round((S.finishedAt - S.startedAt)/1000);
+  const left = S.minutes*60 - used;
+  return `<div class="card win">
+    <div class="stamp">DRUCK GESTOPPT</div>
+    <h1>Geschafft, ${esc(S.group)}!</h1>
+    <p class="lead">Ihr habt bewiesen, dass die Blitz-Meldung eiskalt erfunden ist: kein Autor, keine echten Quellen, reisserische Sprache – und von einer KI geschrieben, die Fakten halluziniert hat.</p>
+    <div class="stats">
+      <div><b>${fmt(used)}</b>benötigte Zeit</div>
+      <div><b>${left >= 0 ? fmt(left) : "–"}</b>Reserve bis Redaktionsschluss</div>
+      <div><b>${S.jokersUsed}</b>Joker eingesetzt</div>
+      <div><b>${S.wrong}</b>Fehlversuche</div>
+    </div>
+    <p>Statt der Falschmeldung druckt der Säntisblick morgen:</p>
+    <div class="frontpage">
+      <div class="mast">❄ Säntisblick ❄</div>
+      <div class="hl">Faktencheck: Die Winterferien finden statt!</div>
+      <p>Die Meldung von BlitzNews24 war von einer KI erfunden. Recherchiert von: <b>${esc(S.group)}</b></p>
+    </div>
+    <p style="margin-top:16px;font-weight:700">Zeigt diesen Bildschirm der Lehrperson.</p>
+  </div>`;
+}
+
+/* ---------- Interaktion ---------- */
+function bind(){
+  const sb = $("#startBtn");
+  if (sb) sb.onclick = () => {
+    const name = $("#groupName").value.trim();
+    if (!name){ $("#groupName").focus(); $("#groupName").classList.add("shake"); setTimeout(() => $("#groupName").classList.remove("shake"), 400); return; }
+    S.group = name; S.phase = "play"; S.stage = 0; S.startedAt = Date.now(); save(); render();
+  };
+  document.querySelectorAll("input[data-part]").forEach(inp => {
+    inp.oninput = () => { S.answers[partKey(+inp.dataset.part)] = inp.value; save(); };
+    inp.onkeydown = e => { if (e.key === "Enter") check(); };
+  });
+  document.querySelectorAll("[data-item]").forEach(b => b.onclick = () => {
+    const i = +b.dataset.part, j = +b.dataset.item, p = STAGES[S.stage].parts[i], k = partKey(i);
+    if (p.type === "toggle"){
+      const v = S.answers[k] || [];
+      v[j] = v[j] == null ? 0 : (v[j] + 1) % p.options.length;
+      S.answers[k] = v;
+    } else if (p.type === "pick"){
+      const v = S.answers[k] || [];
+      S.answers[k] = v.includes(j) ? v.filter(x => x !== j) : v.concat(j);
+    } else if (p.type === "choice"){
+      S.answers[k] = j;
+    }
+    save(); rerenderKeepScroll();
+  });
+  const cb = $("#checkBtn"); if (cb) cb.onclick = check;
+  const hb = $("#hintBtn"); if (hb) hb.onclick = useHint;
+}
+function rerenderKeepScroll(){ const y = window.scrollY; render(); window.scrollTo(0, y); }
+
+function valueOf(p, k){
+  const v = S.answers[k];
+  if (p.type === "code") return norm(v || "");
+  if (p.type === "toggle"){
+    if (!v || p.items.some((_, j) => v[j] == null)) return null;
+    return p.items.map((_, j) => p.letters[v[j]]).join("");
+  }
+  if (p.type === "pick") return (v || []).slice().sort((a, b) => a - b).join(",");
+  if (p.type === "choice") return v == null ? null : p.letters[v];
+}
+
+function check(){
+  const st = STAGES[S.stage];
+  const res = st.parts.map((p, i) => {
+    const v = valueOf(p, partKey(i));
+    if (v === null || v === "") return "empty";
+    if (p.type === "pick" && p.count && S.answers[partKey(i)].length !== p.count) return "count";
+    return p.answers.includes(hash(v)) ? "ok" : "bad";
+  });
+  const fb = $("#fb");
+  if (res.every(r => r === "ok")){ solved(); return; }
+  if (res.some(r => r === "bad")) { S.wrong++; save(); }
+  const msgs = res.map((r, i) => {
+    const name = st.parts.length > 1 ? (st.parts[i].head || "").split("–")[0].trim() + ": " : "";
+    if (r === "ok") return st.parts.length > 1 ? `<div class="feedback okp">✓ ${name}stimmt!</div>` : "";
+    if (r === "empty") return `<div class="feedback err">${name}Noch nicht vollständig ausgefüllt.</div>`;
+    if (r === "count") return `<div class="feedback err">${name}Wählt genau ${st.parts[i].count} Aussagen aus.</div>`;
+    return `<div class="feedback err">✗ ${name}Das stimmt noch nicht. Prüft es nochmals!</div>`;
+  });
+  fb.innerHTML = msgs.join("");
+  const card = $("#stageCard"); card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+  fb.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function useHint(){
+  if (jokersLeft() <= 0) return;
+  const st = STAGES[S.stage], shown = S.hintsShown[S.stage] || 0;
+  if (shown >= st.hints.length) return;
+  confirmBox(`Joker einsetzen?`, `Ihr habt noch ${jokersLeft()} Joker für das ganze Spiel.`, "Ja, Hinweis zeigen", () => {
+    S.jokersUsed++; S.hintsShown[S.stage] = shown + 1; save(); render();
+    const hb = document.querySelector(".hintbox"); if (hb) hb.scrollIntoView({behavior:"smooth", block:"center"});
+  });
+}
+
+function solved(){
+  const st = STAGES[S.stage];
+  const last = S.stage === STAGES.length - 1;
+  showOverlay(`<div class="stamp">GELÖST</div>
+    <h2>${st.icon} ${st.title}</h2>
+    <div class="merk"><b>Merksatz</b>${st.merk}</div>
+    <p style="font-size:15px;color:var(--ink-soft)">Diesen Satz braucht ihr auch für die Prüfung.</p>
+    <div class="actions"><button class="btn primary" id="nextBtn" type="button">${last ? "Druck stoppen! 🛑" : "Weiter zu Rätsel " + (S.stage + 2) + " →"}</button></div>`);
+  $("#nextBtn").onclick = () => { hideOverlay(); advance(); };
+}
+function advance(){
+  if (S.stage === STAGES.length - 1){ S.phase = "won"; S.finishedAt = Date.now(); }
+  else S.stage++;
+  save(); render();
+}
+
+/* ---------- Overlay / Dialoge ---------- */
+function showOverlay(html){ $("#overlayCard").innerHTML = html; $("#overlay").hidden = false; }
+function hideOverlay(){ $("#overlay").hidden = true; }
+function confirmBox(title, text, okLabel, onOk){
+  showOverlay(`<h2>${title}</h2><p>${text}</p><div class="actions">
+    <button class="btn primary" id="cOk" type="button">${okLabel}</button>
+    <button class="btn ghost" id="cNo" type="button">Abbrechen</button></div>`);
+  $("#cOk").onclick = () => { hideOverlay(); onOk(); };
+  $("#cNo").onclick = hideOverlay;
+}
+
+/* ---------- Menü für die Lehrperson ---------- */
+$("#lpBtn").onclick = () => {
+  showOverlay(`<h2>Lehrperson</h2><label class="lbl" for="lpCode">Code</label>
+    <input class="text" id="lpCode" inputmode="numeric" autocomplete="off">
+    <div class="actions"><button class="btn primary" id="lpOk" type="button">Öffnen</button>
+    <button class="btn ghost" id="lpNo" type="button">Abbrechen</button></div>`);
+  const go = () => { if ($("#lpCode").value.trim() === LP_CODE) lpMenu(); else $("#lpCode").classList.add("shake"); };
+  $("#lpOk").onclick = go; $("#lpCode").onkeydown = e => { if (e.key === "Enter") go(); };
+  $("#lpNo").onclick = hideOverlay; $("#lpCode").focus();
+};
+function lpMenu(){
+  const playing = S.phase === "play";
+  showOverlay(`<div class="lpmenu"><h2>Lehrperson</h2>
+    <p style="color:var(--ink-soft)">${S.phase === "start" ? "Spiel noch nicht gestartet." : `Gruppe «${esc(S.group)}» · Rätsel ${Math.min(S.stage + 1, STAGES.length)} · Joker ${S.jokersUsed}/${JOKERS + S.extraJokers}`}</p>
+    <label class="lbl" for="lpMin">Spielzeit in Minuten</label>
+    <input class="text" id="lpMin" inputmode="numeric" value="${S.minutes}" style="margin-bottom:12px">
+    <button class="btn" id="lpSaveMin" type="button">Spielzeit übernehmen</button>
+    ${playing ? `<button class="btn" id="lpJoker" type="button">+1 Joker schenken</button>
+    <button class="btn" id="lpSkip" type="button">Aktuelles Rätsel überspringen</button>` : ""}
+    <button class="btn primary" id="lpReset" type="button">Spiel zurücksetzen (neue Gruppe)</button>
+    <button class="btn ghost" id="lpClose" type="button">Schliessen</button></div>`);
+  $("#lpSaveMin").onclick = () => { const m = parseInt($("#lpMin").value, 10); if (m > 0 && m < 240){ S.minutes = m; save(); render(); } hideOverlay(); };
+  if (playing){
+    $("#lpJoker").onclick = () => { S.extraJokers++; save(); hideOverlay(); render(); };
+    $("#lpSkip").onclick = () => { S.skipped.push(S.stage); hideOverlay(); solved(); };
+  }
+  $("#lpReset").onclick = () => confirmBox("Wirklich zurücksetzen?", "Der Spielstand dieses iPads wird gelöscht.", "Zurücksetzen", () => {
+    const m = S.minutes; S = fresh(); S.minutes = m; save(); render();
+  });
+  $("#lpClose").onclick = hideOverlay;
+}
+
+load(); snow(); render();
+</script>
+</body>
+</html>

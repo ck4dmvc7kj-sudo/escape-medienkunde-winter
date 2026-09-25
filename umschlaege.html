@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umschläge – Eiskalt erfunden</title>
+<style>
+@page{size:A4 portrait;margin:14mm}
+:root{--ink:#1d2330;--soft:#5a6272;--red:#c8322b;--line:#cfc6b2;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e6de;color:var(--ink);font-family:var(--sans);font-size:11pt;line-height:1.45}
+.screen-note{max-width:180mm;margin:16px auto;background:#fff8e6;border:2px solid #e5a31a;border-radius:10px;padding:12px 16px;font-size:15px}
+.screen-note button{font:inherit;font-weight:700;padding:8px 16px;border-radius:8px;border:0;background:var(--red);color:#fff;cursor:pointer}
+.page{width:210mm;min-height:297mm;margin:16px auto;background:#fff;padding:14mm;box-shadow:0 4px 20px rgba(0,0,0,.15);position:relative}
+.env-label{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid var(--ink);padding-bottom:4px;margin-bottom:10mm}
+.env-label b{font-family:var(--serif);font-size:20pt}
+.env-label span{font-size:9pt;color:var(--soft)}
+.fine{position:absolute;bottom:8mm;left:14mm;right:14mm;font-size:8pt;color:var(--soft);text-align:center}
+
+/* Etiketten */
+.labels{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.label{border:2px dashed #999;border-radius:6px;padding:8mm 6mm;text-align:center;height:58mm;display:flex;flex-direction:column;justify-content:center}
+.label .n{font-family:var(--serif);font-size:30pt;font-weight:700}
+.label .w{color:var(--red);font-weight:700;font-size:11pt;margin-top:3mm}
+.label .t{font-size:9pt;color:var(--soft);margin-top:2mm}
+
+/* Umschlag 1 */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:7mm}
+.art{border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.art .top{padding:3mm 4mm;color:#fff;font-weight:700;font-size:10pt;display:flex;justify-content:space-between}
+.art .body{padding:4mm}
+.art h3{font-family:var(--serif);font-size:13pt;line-height:1.2;margin:0 0 3mm}
+.art p{margin:0 0 3mm;font-size:10.5pt}
+.art .tag{font-size:9pt;color:var(--soft)}
+.ab{font-family:var(--serif);font-size:15pt;font-weight:700;margin-bottom:2mm}
+
+/* Umschlag 2 */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.cardx{border:1.5px dashed #888;height:74mm;padding:7mm;display:flex;flex-direction:column;position:relative}
+.cardx .num{position:absolute;top:5mm;right:6mm;font-family:var(--serif);font-size:30pt;font-weight:700;color:#2a6fb0}
+.cardx .num::before{content:"❄ ";font-size:16pt;vertical-align:middle}
+.cardx .time{font-size:9pt;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:1px;margin-top:4mm}
+.cardx p{font-family:var(--serif);font-size:14pt;line-height:1.35;margin:14mm 0 0;padding-right:4mm}
+.cut{font-size:9pt;color:var(--soft);margin:0 0 3mm}
+
+/* Umschlag 3 */
+.web{border:1px solid #bbb;border-radius:8px;overflow:hidden}
+.web .chrome{background:#eee;padding:2mm 4mm;font-size:9pt;color:#555;border-bottom:1px solid #ccc}
+.web .brandbar{background:#ffcc00;padding:3mm 5mm;display:flex;justify-content:space-between;align-items:center}
+.web .brandbar b{font-size:18pt;font-weight:900;letter-spacing:-.5px}
+.web .brandbar span{font-size:9pt;font-weight:700}
+.web .content{display:grid;grid-template-columns:1fr 45mm;gap:5mm;padding:5mm}
+.web h1{font-size:20pt;line-height:1.1;margin:1mm 0 3mm;font-weight:900}
+.web .by{font-size:9pt;color:#666;margin-bottom:3mm}
+.web .lead{font-weight:700}
+.web p{margin:0 0 2.6mm;font-size:10.5pt}
+.ad{border:1px solid #ddd;background:#fafafa;padding:3mm;margin-bottom:4mm;font-size:9pt}
+.ad small{display:block;color:#999;font-size:7pt;text-transform:uppercase;letter-spacing:1px}
+.ad b{display:block;font-size:11pt;margin:1mm 0}
+.share{display:inline-block;background:var(--red);color:#fff;font-weight:700;padding:2mm 4mm;border-radius:4px;font-size:10pt}
+
+/* Umschlag 4 */
+.chat{max-width:150mm;margin:0 auto}
+.chat .head{background:#3b4a5e;color:#fff;border-radius:8px 8px 0 0;padding:3mm 5mm;font-weight:700}
+.chat .log{border:1px solid #ccd;border-top:0;border-radius:0 0 8px 8px;padding:5mm;background:#f4f6fa}
+.msg{max-width:80%;padding:3mm 4mm;border-radius:10px;margin-bottom:3.5mm;font-size:11pt}
+.msg small{display:block;font-size:8pt;color:#667;font-weight:700;margin-bottom:1mm}
+.msg.a{background:#fff;border:1px solid #d6dbe4}
+.msg.b{background:#d9f0d6;margin-left:auto}
+.msg.ai{background:#efe7ff;border:1px dashed #8a6ad1;max-width:100%;font-family:var(--serif)}
+.stampbox{margin-top:8mm;border:3px solid var(--red);color:var(--red);font-weight:900;text-align:center;padding:3mm;border-radius:6px;transform:rotate(-2deg);font-size:14pt;letter-spacing:1px}
+
+@media print{
+  body{background:#fff}
+  .screen-note{display:none}
+  .page{margin:0;box-shadow:none;width:auto;min-height:0;padding:0;page-break-after:always;break-after:page}
+  .page:last-child{page-break-after:auto;break-after:auto}
+  .fine{position:static;margin-top:8mm}
+}
+</style>
+</head>
+<body>
+
+<div class="screen-note">
+  <b>Material für die Umschläge</b> – 5 A4-Seiten. Für jede Gruppe ein Set drucken (bei 5 Gruppen also 5×).
+  Seite 1 sind die Etiketten für die Umschläge, die Karten auf Seite 3 entlang der gestrichelten Linien ausschneiden.
+  <br><br><button type="button" onclick="window.print()">Drucken / als PDF sichern</button>
+</div>
+
+<!-- Etiketten -->
+<section class="page">
+  <div class="env-label"><b>Etiketten für die Umschläge</b><span>Ausschneiden und aufkleben</span></div>
+  <div class="labels">
+    <div class="label"><div class="n">✉ Umschlag 1</div><div class="w">Erst öffnen, wenn die App es sagt!</div><div class="t">Eiskalt erfunden · Säntisblick</div></div>
+    <div class="label"><div class="n">✉ Umschlag 2</div><div class="w">Erst öffnen, wenn die App es sagt!</div><div class="t">Eiskalt erfunden · Säntisblick</div></div>
+    <div class="label"><div class="n">✉ Umschlag 3</div><div class="w">Erst öffnen, wenn die App es sagt!</div><div class="t">Eiskalt erfunden · Säntisblick</div></div>
+    <div class="label"><div class="n">✉ Umschlag 4</div><div class="w">Erst öffnen, wenn die App es sagt!</div><div class="t">Eiskalt erfunden · Säntisblick</div></div>
+  </div>
+  <p style="margin-top:10mm;font-size:10pt;color:var(--soft)">Tipp: Die Gruppennummer auf jeden Umschlag schreiben, damit sich die Sets nicht vermischen.</p>
+</section>
+
+<!-- Umschlag 1 -->
+<section class="page">
+  <div class="env-label"><b>✉ Umschlag 1</b><span>Zwei Artikel von heute Morgen</span></div>
+  <div class="twocol">
+    <div>
+      <div class="ab">Artikel A</div>
+      <div class="art">
+        <div class="top" style="background:#2a6fb0"><span>Hügelland-News</span><span>Dienstag, 07:42</span></div>
+        <div class="body">
+          <h3>Schneefall sorgt für zahlreiche Unfälle in der Ostschweiz</h3>
+          <p>St. Gallen (sda) – Starker Schneefall hat am Dienstag in der Ostschweiz zu zahlreichen Verkehrsunfällen geführt. Die Kantonspolizeien St. Gallen und Appenzell Ausserrhoden meldeten bis am Mittag insgesamt 23 Unfälle. Verletzt wurde nach ersten Angaben niemand schwer.</p>
+          <p>Besonders betroffen war die Strecke zwischen Teufen und Gais. Mehrere Autos rutschten auf der glatten Fahrbahn in den Strassengraben. Ein Lastwagen blieb am Stoss stecken und blockierte die Strasse während rund einer Stunde.</p>
+          <p>Die Polizei ruft dazu auf, nur mit Winterreifen unterwegs zu sein und genügend Abstand zu halten. Laut MeteoSchweiz fallen bis am Mittwochmorgen nochmals bis zu 20 Zentimeter Neuschnee.</p>
+          <p>Der Räumungsdienst ist seit den frühen Morgenstunden im Einsatz.</p>
+          <p class="tag">(sda)</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="ab">Artikel B</div>
+      <div class="art">
+        <div class="top" style="background:#7a3fa0"><span>Blickpunkt Ost</span><span>Dienstag, 07:45</span></div>
+        <div class="body">
+          <h3>Schneefall sorgt für zahlreiche Unfälle in der Ostschweiz</h3>
+          <p>St. Gallen (sda) – Anhaltender Schneefall hat am Dienstag in der Ostschweiz zu zahlreichen Verkehrsunfällen geführt. Die Kantonspolizeien St. Gallen und Appenzell Ausserrhoden meldeten bis am Mittag gesamthaft 23 Unfälle. Verletzt wurde nach ersten Erkenntnissen niemand schwer.</p>
+          <p>Namentlich betroffen war die Strecke zwischen Teufen und Gais. Mehrere Autos rutschten auf der tückischen Fahrbahn in den Strassengraben. Ein Lastwagen blieb am Stoss stecken und blockierte die Strasse während ungefähr einer Stunde.</p>
+          <p>Die Polizei ruft dazu auf, nur mit Winterreifen unterwegs zu sein und reichlich Abstand zu halten. Laut MeteoSchweiz fallen bis am Mittwochmorgen nochmals bis zu 20 Zentimeter Neuschnee.</p>
+          <p>Der Räumungsdienst ist seit den frühen Morgenstunden im Einsatz.</p>
+          <p class="tag">(sda)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fine">Alle Texte, Portale und Personen in diesem Spiel sind erfunden.</div>
+</section>
+
+<!-- Umschlag 2 -->
+<section class="page">
+  <div class="env-label"><b>✉ Umschlag 2</b><span>So ist der Artikel über den Lastwagen am Stoss entstanden</span></div>
+  <p class="cut">✂ Karten entlang der gestrichelten Linien ausschneiden und gemischt in den Umschlag legen.</p>
+  <div class="cards">
+    <div class="cardx"><div class="num">9</div><p>Am Newsdesk sitzt ein Team zusammen und entscheidet: Bringen wir die Meldung? Wie gross? Mit welchem Bild und welchem Titel?</p></div>
+    <div class="cardx"><div class="num">5</div><p>In wenigen Millisekunden wird der Werbeplatz neben dem Artikel an die meistbietende Firma versteigert.</p></div>
+    <div class="cardx"><div class="num">4</div><p>Ein Lastwagen bleibt am Stoss im Schnee stecken. Mehrere Autofahrer rufen die Polizei.</p></div>
+    <div class="cardx"><div class="num">3</div><p>Der Artikel erscheint online. Am nächsten Morgen liegt er auch in der Zeitung im Briefkasten.</p></div>
+    <div class="cardx"><div class="num">1</div><p>In einer Zentrale wird aus den Informationen eine kurze Meldung geschrieben und gleichzeitig an Hunderte Redaktionen in der ganzen Schweiz verschickt.</p></div>
+    <div class="cardx"><div class="num">7</div><p>Eine Reporterin fährt hin, spricht mit dem Polizisten vor Ort, macht Fotos und klärt die W-Fragen: Wer? Was? Wann? Wo? Wie? Warum?</p></div>
+  </div>
+</section>
+
+<!-- Umschlag 3 -->
+<section class="page">
+  <div class="env-label"><b>✉ Umschlag 3</b><span>Die Blitz-Meldung (Ausdruck der Webseite)</span></div>
+  <div class="web">
+    <div class="chrome">🔒 blitznews24 · Startseite › Schweiz › Trending</div>
+    <div class="brandbar"><b>⚡ BlitzNews24</b><span>GRATIS-NEWS RUND UM DIE UHR</span></div>
+    <div class="content">
+      <div>
+        <div class="by">Heute, 14:07 · 🔥 Trending · 48 312 Mal geteilt</div>
+        <h1>SCHNEE-SKANDAL: Winterferien im Appenzellerland GESTRICHEN! 😱</h1>
+        <p class="lead">Es ist unfassbar: Wegen des Schneechaos müssen alle Schülerinnen und Schüler im Appenzellerland auf ihre Winterferien verzichten! Die Chaos-Behörde hat endlich zugegeben, dass die Schulen viel zu viel Stoff verpasst haben.</p>
+        <p>Seit Dienstagmorgen schneit es im Appenzellerland ohne Pause. Auf der Strasse zwischen Teufen und Gais krachte es gleich mehrmals. Selbst der Säntis, der höchste Berg im Alpstein, ist unter den Schneemassen kaum noch zu sehen.</p>
+        <p>Wie Insider berichten, sollen die Schulen im Februar einfach offen bleiben. Experten warnen schon lange vor diesem Schritt. «Das ist ein schockierender Entscheid», sagt ein Vater, der anonym bleiben will.</p>
+        <p>Gemäss einer neuen Studie der Universität Teufen lernen Kinder in Schneewintern bis zu 40 Prozent weniger. Regierungsrat Dr. Kurt Flockenhuber bestätigte gegenüber BlitzNews24: «Die Winterferien sind ab sofort gestrichen.»</p>
+        <p>Teufen, das im Kanton Appenzell Innerrhoden liegt, wäre als erste Gemeinde betroffen. Ob auch andere Kantone folgen, ist noch unklar.</p>
+        <p><span class="share">Teile diese Meldung, bevor sie gelöscht wird! 👉</span></p>
+      </div>
+      <div>
+        <div class="ad"><small>Anzeige</small><b>Skiwachs –50 %</b>Nur heute! Jetzt zuschlagen.</div>
+        <div class="ad"><small>Anzeige</small><b>Das glaubst du nicht!</b>Diese 7 Tricks hassen Lehrer… 👀</div>
+        <div class="ad"><small>Gesponsert</small><b>Winterjacken-Sale</b>Bis zu 70 % Rabatt</div>
+        <div class="ad"><small>Mehr von BlitzNews24</small><b>Schock-Video!</b>Lawine rast auf Dorf zu – Sie werden nicht glauben, was dann passiert</div>
+      </div>
+    </div>
+  </div>
+  <div class="fine">Alle Texte, Portale und Personen in diesem Spiel sind erfunden.</div>
+</section>
+
+<!-- Umschlag 4 -->
+<section class="page">
+  <div class="env-label"><b>✉ Umschlag 4</b><span>Zugespielt: Chat-Verlauf aus der Redaktion von BlitzNews24</span></div>
+  <div class="chat">
+    <div class="head">💬 #redaktion-blitz · Dienstag</div>
+    <div class="log">
+      <div class="msg a"><small>Chef · 13:52</small>Leute, die Klicks sind im Keller. Wir brauchen JETZT was zum Schnee!</div>
+      <div class="msg b"><small>Praktikant · 13:55</small>Hab eine KI gefragt: «Schreib eine spannende News, dass wegen dem Schnee die Winterferien im Appenzellerland gestrichen werden. Mit Zitaten, Zahlen und einer Studie.»</div>
+      <div class="msg ai"><small>KI-Antwort (Ausschnitt) · 13:56</small>«SCHNEE-SKANDAL: Winterferien im Appenzellerland gestrichen! … Gemäss einer neuen Studie der Universität Teufen … Regierungsrat Dr. Kurt Flockenhuber bestätigte … Teufen, das im Kanton Appenzell Innerrhoden liegt …»</div>
+      <div class="msg b"><small>Praktikant · 14:01</small>Fertig! Soll ich noch prüfen, ob das alles stimmt? 🤔</div>
+      <div class="msg a"><small>Chef · 14:02</small>Keine Zeit. Raus damit! Titel in Grossbuchstaben und ein Emoji dazu. Kein Autorenname.</div>
+      <div class="msg a"><small>Chef · 14:31</small>48 000 Mal geteilt!!! 🚀 Die Werbeplätze sind heute Gold wert.</div>
+    </div>
+    <div class="stampbox">BEWEISSTÜCK – VERTRAULICH</div>
+  </div>
+  <div class="fine">Alle Texte, Portale und Personen in diesem Spiel sind erfunden.</div>
+</section>
+
+</body>
+</html>
