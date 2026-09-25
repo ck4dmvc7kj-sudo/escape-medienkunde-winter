@@ -122,7 +122,7 @@ input.name{letter-spacing:0;text-transform:none;font-size:22px}
 .overlay .card{max-width:640px;width:100%;max-height:90vh;overflow:auto}
 .stamp{display:inline-block;border:4px solid var(--green);color:var(--green);font-weight:900;letter-spacing:2px;padding:6px 14px;border-radius:8px;transform:rotate(-4deg);font-size:22px;margin-bottom:10px}
 .merk{background:var(--paper-2);border-radius:12px;padding:14px 16px;font-size:18px}
-.merk b{display:block;margin-bottom:4px;color:var(--red);font-size:14px;letter-spacing:1px;text-transform:uppercase}
+.merk .mh{display:block;margin-bottom:4px;color:var(--red);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 
 .win h1{font-size:52px;color:var(--red)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
@@ -184,12 +184,13 @@ const STAGES = [
     story:"Zuerst will der Chefredaktor sehen, ob ihr euer Handwerk versteht. Heute Morgen sind auf zwei Portalen Artikel über das Schneechaos erschienen. Sie sehen fast gleich aus – aber eben nur fast.",
     parts:[{
       type:"code", label:"Codewort",
-      task:"<p>Öffnet <b>Umschlag 1</b> und vergleicht den Fliesstext der beiden Artikel (Titel und Kopfzeile zählen nicht).</p><p>In <b>Artikel B</b> sind <b>7 Wörter</b> anders als in Artikel A. Die Anfangsbuchstaben dieser 7 Wörter ergeben – der Reihe nach – die Antwort auf die Frage: <b>Wer hat diese Texte wirklich geschrieben?</b></p>",
-      answers:["b8bf6643","71d71fa8"]
+      task:"<p>Öffnet <b>Umschlag 1</b> und vergleicht den Fliesstext der beiden Artikel (Titel und Kopfzeile zählen nicht).</p><p>In <b>Artikel B</b> sind <b>7 Wörter</b> anders als in Artikel A. Notiert die Anfangsbuchstaben dieser 7 Wörter. Achtung: Sie sind durcheinander!</p><p>Bildet aus den 7 Buchstaben ein Wort. Es ist die Antwort auf die Frage: <b>Wer hat diese Texte wirklich geschrieben?</b></p>",
+      answers:["b8bf6643","71d71fa8"],
+      nearMiss:{"b8aaeb6d":"Das sind die richtigen 7 Buchstaben! Jetzt bildet daraus ein Wort aus der Medienkunde."}
     }],
     hints:[
       "Legt die beiden Artikel nebeneinander und lest Satz für Satz parallel. Sie sind genau gleich aufgebaut.",
-      "Die ersten zwei abweichenden Wörter in Artikel B sind «Anhaltender» (statt «Starker») und «gesamthaft» (statt «insgesamt»). Das Wort beginnt also mit A-G-…"
+      "Die Buchstaben sind E, T, A, N, G, U, R. Gesucht ist ein Begriff aus Lektion 1: Wer liefert Texte an viele Redaktionen?"
     ],
     merk:"Nachrichtenagenturen wie <b>Keystone-SDA</b> schreiben Meldungen und verkaufen sie an viele Redaktionen. Deshalb sehen viele Online-Artikel fast gleich aus. Erkennungszeichen: das Kürzel «(sda)» oder «Keystone-SDA»."
   },
@@ -211,21 +212,25 @@ const STAGES = [
     icon:"⏱️", title:"Online gegen Print", lz:"LZ 4", envelope:null,
     story:"Die Blitz-Meldung war um 14:07 Uhr online – unsere Zeitung erscheint erst morgen früh. Der Chefredaktor ist nervös: «Die anderen sind viel schneller als wir!» Aber ist Tempo nur ein Vorteil?",
     parts:[{
-      type:"toggle", options:["Online","Print"], letters:["O","P"],
-      task:"<p>Tippt jede Aussage an, bis es stimmt: Passt sie zu <b>Online</b>- oder zu <b>Print</b>-Journalismus?</p>",
+      type:"toggle", options:["richtig","falsch"], letters:["R","F"], cls:["ok","bad"],
+      task:"<p>Stimmt die Aussage oder nicht? Tippt jede Aussage an, bis <b>richtig</b> oder <b>falsch</b> steht.</p>",
       items:[
-        "Erscheint wenige Minuten nach dem Ereignis.",
-        "Ein Fehler steht fest – korrigiert wird erst in der nächsten Ausgabe.",
-        "Klickzahlen bestimmen die Werbeeinnahmen – das verlockt zu reisserischen Titeln.",
-        "Ein Fehler lässt sich sofort korrigieren – aber Screenshots verbreiten ihn weiter.",
-        "Bis zum Redaktionsschluss bleibt Zeit zum Prüfen und Gegenlesen.",
-        "Längere Texte mit mehr Hintergrund und Einordnung."
+        "Online-Artikel können wenige Minuten nach dem Ereignis erscheinen.",
+        "Eine Zeitung kann einen Fehler noch am selben Tag in der gedruckten Ausgabe korrigieren.",
+        "Beim Print-Journalismus bleibt bis zum Redaktionsschluss mehr Zeit zum Prüfen und Gegenlesen.",
+        "Online-Artikel enthalten häufiger Fehler, weil der Zeitdruck grösser ist.",
+        "Wird ein Online-Artikel korrigiert, ist der Fehler aus der Welt.",
+        "Printartikel sind meistens kürzer und haben weniger Hintergrund als Online-Artikel.",
+        "Bei werbefinanzierten Online-Portalen hängen die Einnahmen von den Klickzahlen ab.",
+        "Online-Artikel sind immer schlechter als Printartikel.",
+        "Die Printausgabe erscheint meistens erst am Morgen nach dem Ereignis.",
+        "Online-Portale übernehmen Agenturmeldungen seltener als Zeitungen, weil sie mehr Zeit haben."
       ],
-      answers:["9f950466"]
+      answers:["251e363b"]
     }],
     hints:[
-      "Denkt an den Zeitdruck: Wer kann sofort publizieren – und wer hat einen Redaktionsschluss am Abend?",
-      "Drei Aussagen gehören zu Online, drei zu Print. Klickzahlen und Screenshots gehören zu Online."
+      "Denkt an den Zeitdruck: Wer kann sofort publizieren – und wer hat einen Redaktionsschluss am Abend? Und: Screenshots vergessen nichts.",
+      "5 Aussagen sind richtig, 5 falsch. Vorsicht bei Wörtern wie «immer»: Online ist nicht automatisch schlechter, es hat nur mehr Zeitdruck."
     ],
     merk:"Online ist schneller, Print hat mehr Zeit zum Prüfen. Der <b>Zeitdruck</b> ist ein Hauptgrund, warum Online-Artikel häufiger Fehler enthalten. Unser Vorteil: Wir haben bis 21:30 Uhr Zeit, die Blitz-Meldung zu prüfen!"
   },
@@ -241,19 +246,24 @@ const STAGES = [
         answers:["dfd722c2"]
       },
       {
-        type:"choice", head:"Teil B – Die Klicklogik",
-        task:"<p>Warum lohnt sich eine Schock-Meldung für BlitzNews24?</p>",
+        type:"pick", style:"list", count:4, head:"Teil B – Die Klicklogik",
+        task:"<p>Was stimmt über Gratis-Portale wie BlitzNews24? Wählt die <b>4 richtigen</b> Aussagen.</p>",
         items:[
-          "Weil dann die Serafe-Gebühren steigen.",
-          "Weil mehr Klicks mehr verkaufte Werbeplätze und damit mehr Geld bedeuten.",
-          "Weil dann mehr Leute ein Abo abschliessen."
+          "Gratis-Portale werden über die Serafe-Abgabe finanziert.",
+          "Je mehr Klicks ein Artikel bekommt, desto mehr Werbeplätze kann das Portal verkaufen.",
+          "Weil sie gratis sind, müssen Gratis-Portale nicht auf ihre Einnahmen achten.",
+          "Reisserische Titel (Clickbait) sollen möglichst viele Klicks bringen.",
+          "Beim Öffnen der Seite werden Daten über dich genutzt, um Werbeplätze in Millisekunden zu versteigern.",
+          "Eine Paywall sorgt dafür, dass alle Artikel gratis bleiben.",
+          "Die Leserinnen und Leser bezahlen mit ihrer Aufmerksamkeit und ihren Daten.",
+          "Werbefinanzierte Portale haben keinen Grund, ihre Titel spannender zu machen."
         ],
-        letters:["a","b","c"], answers:["811ee947"]
+        answers:["ae1e68d9"]
       }
     ],
     hints:[
       "Drei Modelle: Werbung (gratis für die Leserschaft), Abo/Paywall (die Leserschaft bezahlt), Gebühren (alle Haushalte zahlen die Serafe-Abgabe).",
-      "Nur ein Medium ist gebührenfinanziert: SRF. Zwei haben eine Paywall: NZZ und Tages-Anzeiger. Alle anderen leben von Werbung."
+      "Teil A: Nur SRF ist gebührenfinanziert, NZZ und Tages-Anzeiger haben eine Paywall. Teil B: Denkt an Clickbait und Real-Time-Bidding aus dem Gruppenpuzzle."
     ],
     merk:"<b>Werbefinanziert:</b> 20 Minuten, watson, nau.ch · <b>Abo/Paywall:</b> NZZ, Tages-Anzeiger · <b>Gebühren:</b> SRF. Gratis ist nie gratis: Werbefinanzierte Portale leben von Klicks – das verlockt zu Clickbait statt Qualität."
   },
@@ -269,23 +279,23 @@ const STAGES = [
           "1 Autorenschaft <small>Wer hat den Artikel geschrieben?</small>",
           "2 Datum & Aktualität <small>Ist die Meldung aktuell?</small>",
           "3 Quellen & Belege <small>Werden überprüfbare Quellen genannt?</small>",
-          "4 Sprache & Ton <small>Sachlich oder reisserisch?</small>",
+          "4 Sprache & Ton <small>Sachlich oder wertend?</small>",
           "5 Mediumstyp <small>Wie finanziert sich das Portal, welche Interessen hat es?</small>"
         ],
         answers:["e1c48ad2"]
       },
       {
         type:"pick", style:"chips", head:"Teil B – Nachricht oder Meinung?",
-        task:"<p>Eine sachliche Nachricht wertet nicht. Tippt alle Wörter aus der Blitz-Meldung an, die <b>werten</b>.</p>",
-        items:["Winterferien","SKANDAL","Februar","unfassbar","Schulen","Chaos-Behörde","Regierungsrat","endlich","Studie","schockierend","Appenzellerland"],
-        answers:["aaf89b6a"]
+        task:"<p>Eine sachliche Nachricht wertet nicht. Tippt alle Wörter aus der Blitz-Meldung an, mit denen die Schreibenden selbst <b>werten</b>.</p>",
+        items:["Winterferien","Hart","Februar","endlich","Schulen","massiven","Regierungsrat","überfälliger","Studie","Appenzellerland"],
+        answers:["503784c1"]
       }
     ],
     hints:[
       "Nur ein einziges Kriterium ist erfüllt. Aber Achtung: aktuell heisst noch lange nicht wahr!",
-      "Wertende Wörter drücken ein Gefühl oder eine Meinung aus. Es sind genau 5 – eines davon ist «unfassbar»."
+      "Wertende Wörter drücken ein Gefühl oder eine Meinung aus. Es sind genau 4 – eines davon ist «endlich»."
     ],
-    merk:"Nur das Datum stimmt. Der Autor fehlt, die Quellen sind vage («Insider», «Experten»), die Sprache ist reisserisch und das Portal lebt von Klicks. <b>Eine Nachricht ist sachlich</b> – wertende Wörter gehören in einen klar gekennzeichneten Kommentar."
+    merk:"Nur das Datum stimmt. Der Autor fehlt, die Quellen sind vage («Insider», «Experten», eine anonyme Mutter), die Sprache wertet und das Portal lebt von Klicks. <b>Eine Nachricht ist sachlich</b> – wertende Wörter gehören in einen klar gekennzeichneten Kommentar."
   },
   {
     icon:"🤖", title:"Mensch oder Maschine?", lz:"LZ 9–10", envelope:4, final:true,
@@ -328,7 +338,7 @@ const STAGES = [
 ];
 
 /* ---------- Zustand ---------- */
-const KEY = "eiskalt-erfunden-v1";
+const KEY = "eiskalt-erfunden-v2";
 const fresh = () => ({ phase:"start", group:"", stage:0, startedAt:0, finishedAt:0, minutes:DEFAULT_MINUTES,
   jokersUsed:0, extraJokers:0, hintsShown:{}, answers:{}, wrong:0, skipped:[] });
 let S = fresh();
@@ -396,7 +406,7 @@ function startView(){
       <p>Dienstag, 16:30 Uhr, Redaktion der Zeitung <b>«Säntisblick»</b>. Draussen schneit es seit dem frühen Morgen.</p>
       <p>Seit 14:07 Uhr verbreitet sich auf dem Gratis-Portal <b>BlitzNews24</b> eine Meldung wie ein Lauffeuer:</p>
     </div>
-    <div class="headline-fake">«SCHNEE-SKANDAL: Winterferien im Appenzellerland GESTRICHEN!»</div>
+    <div class="headline-fake">«Wegen Schneechaos: Winterferien im Appenzellerland gestrichen»</div>
     <div class="story">
       <p>Der Chefredaktor will die Geschichte morgen auf die Titelseite bringen. <b>Redaktionsschluss ist um 21:30 Uhr.</b></p>
       <p>Ihr seid das Recherche-Team. Prüft die Meldung Schritt für Schritt – mit allem, was ihr in der Medienkunde gelernt habt.</p>
@@ -474,7 +484,7 @@ function winView(){
   return `<div class="card win">
     <div class="stamp">DRUCK GESTOPPT</div>
     <h1>Geschafft, ${esc(S.group)}!</h1>
-    <p class="lead">Ihr habt bewiesen, dass die Blitz-Meldung eiskalt erfunden ist: kein Autor, keine echten Quellen, reisserische Sprache – und von einer KI geschrieben, die Fakten halluziniert hat.</p>
+    <p class="lead">Ihr habt bewiesen, dass die Blitz-Meldung eiskalt erfunden ist: kein Autor, keine echten Quellen, wertende Sprache – und von einer KI geschrieben, die Fakten halluziniert hat.</p>
     <div class="stats">
       <div><b>${fmt(used)}</b>benötigte Zeit</div>
       <div><b>${left >= 0 ? fmt(left) : "–"}</b>Reserve bis Redaktionsschluss</div>
@@ -539,7 +549,9 @@ function check(){
     const v = valueOf(p, partKey(i));
     if (v === null || v === "") return "empty";
     if (p.type === "pick" && p.count && S.answers[partKey(i)].length !== p.count) return "count";
-    return p.answers.includes(hash(v)) ? "ok" : "bad";
+    const h = hash(v);
+    if (p.answers.includes(h)) return "ok";
+    return p.nearMiss && p.nearMiss[h] ? "near" : "bad";
   });
   const fb = $("#fb");
   if (res.every(r => r === "ok")){ solved(); return; }
@@ -549,6 +561,7 @@ function check(){
     if (r === "ok") return st.parts.length > 1 ? `<div class="feedback okp">✓ ${name}stimmt!</div>` : "";
     if (r === "empty") return `<div class="feedback err">${name}Noch nicht vollständig ausgefüllt.</div>`;
     if (r === "count") return `<div class="feedback err">${name}Wählt genau ${st.parts[i].count} Aussagen aus.</div>`;
+    if (r === "near") return `<div class="feedback okp">${name}${st.parts[i].nearMiss[hash(valueOf(st.parts[i], partKey(i)))]}</div>`;
     return `<div class="feedback err">✗ ${name}Das stimmt noch nicht. Prüft es nochmals!</div>`;
   });
   fb.innerHTML = msgs.join("");
@@ -571,7 +584,7 @@ function solved(){
   const last = S.stage === STAGES.length - 1;
   showOverlay(`<div class="stamp">GELÖST</div>
     <h2>${st.icon} ${st.title}</h2>
-    <div class="merk"><b>Merksatz</b>${st.merk}</div>
+    <div class="merk"><span class="mh">Merksatz</span>${st.merk}</div>
     <p style="font-size:15px;color:var(--ink-soft)">Diesen Satz braucht ihr auch für die Prüfung.</p>
     <div class="actions"><button class="btn primary" id="nextBtn" type="button">${last ? "Druck stoppen! 🛑" : "Weiter zu Rätsel " + (S.stage + 2) + " →"}</button></div>`);
   $("#nextBtn").onclick = () => { hideOverlay(); advance(); };
