@@ -302,17 +302,21 @@ const STAGES = [
     story:"Letzte Spur! Eine Quelle hat euch einen Chat-Verlauf aus der Redaktion von BlitzNews24 zugespielt. Jetzt habt ihr den Beweis in der Hand – wenn ihr ihn richtig lest.",
     parts:[
       {
-        type:"pick", style:"list", count:3, head:"Teil A – Erfundene Fakten",
-        task:"<p>Öffnet <b>Umschlag 4</b>. Die Blitz-Meldung wurde von einer KI geschrieben – und die KI hat Fakten erfunden (<b>Halluzination</b>).</p><p>Welche <b>3 Aussagen</b> aus der Blitz-Meldung sind erfunden oder falsch? Tipp: Die Artikel aus Umschlag 1 helfen euch.</p>",
+        type:"pick", style:"list", head:"Teil A – Erfundene Fakten",
+        task:"<p>Öffnet <b>Umschlag 4</b>. Die Blitz-Meldung wurde von einer KI geschrieben – und die KI hat Fakten erfunden (<b>Halluzination</b>). Das Gefährliche daran: Die Fehler klingen glaubwürdig.</p><p>Welche Aussagen aus der Blitz-Meldung sind <b>falsch</b>? Prüft jede Aussage genau – wie viele es sind, verraten wir nicht.</p>",
         items:[
-          "Im Appenzellerland schneit es seit Dienstagmorgen.",
-          "Eine Studie der Universität Teufen zeigt, dass Kinder in Schneewintern weniger lernen.",
-          "Auf der Strasse zwischen Teufen und Gais gab es Unfälle.",
-          "Teufen liegt im Kanton Appenzell Innerrhoden.",
+          "Seit Dienstagmorgen schneit es im Appenzellerland.",
+          "Auf der Strecke zwischen Teufen und Gais kam es zu Unfällen.",
+          "Bis am Mittag zählte die Polizei über 40 Unfälle.",
+          "Die Strasse am Stoss war einen ganzen Tag gesperrt.",
           "Der Säntis ist der höchste Berg im Alpstein.",
-          "Regierungsrat Dr. Kurt Flockenhuber hat den Entscheid bestätigt."
+          "Laut MeteoSchweiz fallen bis Mittwochmorgen nochmals bis zu 20 Zentimeter Neuschnee.",
+          "Teufen liegt im Kanton Appenzell Innerrhoden.",
+          "Der Regierungsrat hat den Entscheid schon am Montag bekannt gegeben."
         ],
-        answers:["cc168ac8"]
+        answers:["2f0d5f21"],
+        /* ab dem 2. Fehlversuch zeigt die App, wie viele Aussagen richtig beurteilt sind */
+        itemHashes:["0e975caf","97f575c0","b8861952","d3f89ff1","532403b3","7caa2814","fd12c056","17481275"]
       },
       {
         type:"toggle", options:["kann KI gut","kann KI nicht"], letters:["K","N"], cls:["ok","bad"],
@@ -330,15 +334,15 @@ const STAGES = [
       }
     ],
     hints:[
-      "Vergleicht mit den sda-Artikeln aus Umschlag 1: Was dort steht, stimmt. Und: Teufen liegt in Appenzell Ausserrhoden.",
-      "Erfunden sind die Universität Teufen, der falsche Kanton – und ein Regierungsrat mit einem sehr winterlichen Namen. Teil B: KI kann nicht vor Ort sein und nicht selbst prüfen, ob etwas wahr ist."
+      "Legt die sda-Artikel aus Umschlag 1 neben die Blitz-Meldung und vergleicht jede Zahl. Was im sda-Artikel steht, stimmt.",
+      "Teil A: Zwei Fehler findet ihr durch den Vergleich mit sda, einen durch euer Wissen über Teufen und einen, wenn ihr genau auf die Wochentage achtet. Teil B: KI kann nicht vor Ort sein und nicht selbst prüfen, ob etwas wahr ist."
     ],
-    merk:"Eine KI berechnet, welche Wörter wahrscheinlich folgen – sie <b>weiss nicht, ob etwas wahr ist</b>. Darum kann sie Fakten erfinden (Halluzination). Hilfreich ist KI bei Routinearbeit wie Sportresultaten, Übersetzungen oder Transkriptionen. Prüfen und entscheiden muss ein Mensch."
+    merk:"Eine KI berechnet, welche Wörter wahrscheinlich folgen – sie <b>weiss nicht, ob etwas wahr ist</b>. Darum kann sie Fakten erfinden (Halluzination) – und die klingen oft völlig glaubwürdig. Nur wer mit einer zuverlässigen Quelle vergleicht, findet sie. Hilfreich ist KI bei Routinearbeit wie Sportresultaten, Übersetzungen oder Transkriptionen. Prüfen und entscheiden muss ein Mensch."
   }
 ];
 
 /* ---------- Zustand ---------- */
-const KEY = "eiskalt-erfunden-v3";
+const KEY = "eiskalt-erfunden-v4";
 const fresh = () => ({ phase:"start", group:"", stage:0, startedAt:0, finishedAt:0, minutes:DEFAULT_MINUTES,
   jokersUsed:0, extraJokers:0, hintsShown:{}, answers:{}, wrong:0, fails:{}, skipped:[] });
 let S = fresh();
@@ -566,9 +570,11 @@ function check(){
     if (r === "near") return `<div class="feedback okp">${name}${st.parts[i].nearMiss[hash(valueOf(st.parts[i], partKey(i)))]}</div>`;
     const p = st.parts[i], k = partKey(i);
     if (p.itemHashes && S.fails[k] >= 2){
-      const v = S.answers[k];
-      const n = p.itemHashes.filter((h, j) => hash(j + ":" + p.letters[v[j]]) === h).length;
-      return `<div class="feedback err">✗ ${name}${n} von ${p.items.length} Aussagen stimmen. Welche noch nicht?</div>`;
+      const v = S.answers[k] || [];
+      const n = p.itemHashes.filter((h, j) =>
+        hash(j + ":" + (p.type === "pick" ? (v.includes(j) ? 1 : 0) : p.letters[v[j]])) === h).length;
+      const what = p.type === "pick" ? "Aussagen sind richtig beurteilt" : "Aussagen stimmen";
+      return `<div class="feedback err">✗ ${name}${n} von ${p.items.length} ${what}. Welche noch nicht?</div>`;
     }
     return `<div class="feedback err">✗ ${name}Das stimmt noch nicht. Prüft es nochmals!</div>`;
   });
